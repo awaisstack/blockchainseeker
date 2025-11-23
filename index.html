@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlockchainSeeker | The Standard in AI Due Diligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- DESIGN SYSTEM --- */
+        :root {
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.5);
+            --accent: #8b5cf6;
+            
+            --bg-deep: #050507;
+            --bg-card: rgba(15, 23, 42, 0.6);
+            
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --border-light: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* --- SCROLLBAR STABILIZATION FIX --- */
+        html {
+            scroll-behavior: smooth;
+            overflow-y: scroll; /* Forces scrollbar track to always exist to prevent jumping */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden; /* Strictly prevent horizontal scroll */
+            width: 100%;
+            position: relative;
+        }
+
+        /* --- BACKGROUND FX --- */
+        .background-fx {
+            position: fixed; top: 0; left: 0; 
+            width: 100%; /* Changed from 100vw to prevent overflow */
+            height: 100%; 
+            z-index: -1; pointer-events: none;
+        }
+        .orb {
+            position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.3;
+        }
+        .orb-1 { width: 600px; height: 600px; background: var(--primary-glow); top: -10%; left: -10%; }
+        .orb-2 { width: 500px; height: 500px; background: rgba(139, 92, 246, 0.4); bottom: 0%; right: -10%; }
+        .grid-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(var(--border-light) 1px, transparent 1px),
+            linear-gradient(90deg, var(--border-light) 1px, transparent 1px);
+            background-size: 60px 60px; opacity: 0.07;
+        }
+
+        /* --- UTILITIES --- */
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+        .text-gradient {
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- BUTTONS --- */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 12px 32px; border-radius: 8px; border: none; cursor: pointer;
+            font-weight: 600; font-size: 0.95rem; transition: all 0.2s;
+            text-decoration: none;
+        }
+        .btn-primary {
+            background: var(--primary); color: white;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+        }
+        .btn-primary:hover { background: #2563eb; transform: translateY(-2px); }
+        
+        .btn-outline {
+            background: rgba(255,255,255,0.05); color: white;
+            border: 1px solid var(--border-light);
+        }
+        .btn-outline:hover { border-color: var(--text-main); background: rgba(255,255,255,0.1); }
+
+        /* --- NAV --- */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 100;
+            background: rgba(5, 5, 7, 0.85); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-light);
+        }
+        .nav-inner { height: 80px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.4rem; font-weight: 700; display: flex; align-items: center; gap: 10px; color: white; }
+        .logo i { color: var(--primary); }
+        .nav-links { display: flex; gap: 32px; }
+        .nav-links a { color: var(--text-muted); font-size: 0.9rem; font-weight: 500; transition: 0.2s; }
+        .nav-links a:hover { color: white; }
+
+        /* --- HERO --- */
+        .hero { padding: 180px 0 100px; text-align: center; }
+        .hero-badge {
+            display: inline-block; padding: 6px 14px; background: rgba(59, 130, 246, 0.1);
+            color: var(--primary); border-radius: 50px; font-size: 0.8rem; font-weight: 600;
+            margin-bottom: 24px; border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        .hero h1 {
+            font-size: clamp(3rem, 5vw, 4.5rem); line-height: 1.1; font-weight: 800;
+            margin-bottom: 24px; letter-spacing: -0.03em;
+        }
+        .hero p {
+            font-size: 1.2rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 40px;
+        }
+
+        /* --- PLATFORM & FEATURES --- */
+        section { padding: 100px 0; border-top: 1px solid var(--border-light); }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-header h2 { font-size: 2.5rem; margin-bottom: 16px; }
+        .section-header p { color: var(--text-muted); }
+
+        .grid-3 {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;
+        }
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border-light);
+            padding: 32px; border-radius: 16px; transition: 0.3s;
+        }
+        .card:hover { border-color: var(--primary); transform: translateY(-5px); }
+        .card-icon {
+            width: 50px; height: 50px; background: rgba(255,255,255,0.05);
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            color: var(--primary); font-size: 1.2rem; margin-bottom: 20px;
+        }
+        .card h3 { font-size: 1.2rem; margin-bottom: 10px; }
+        .card p { color: var(--text-muted); font-size: 0.95rem; }
+
+        /* --- PRICING --- */
+        .price-tag { font-size: 2.5rem; font-weight: 700; margin: 20px 0; }
+        .price-tag span { font-size: 1rem; color: var(--text-muted); font-weight: 400; }
+        .feature-list { list-style: none; text-align: left; margin: 24px 0; }
+        .feature-list li { margin-bottom: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 10px; }
+        .feature-list i { color: var(--primary); font-size: 0.9rem; }
+
+        /* --- ENTERPRISE CTA --- */
+        .cta-box {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            padding: 60px; border-radius: 24px; text-align: center;
+            border: 1px solid var(--border-light);
+        }
+
+        /* --- APP OVERLAY --- */
+        #app-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(15px);
+            z-index: 9999; display: none; opacity: 0; transition: opacity 0.3s;
+            align-items: center; justify-content: center;
+        }
+        #app-overlay.active { display: flex; opacity: 1; }
+
+        #chat-window {
+            width: 90%; max-width: 1000px; height: 85vh;
+            background: #000; border: 1px solid var(--border-light);
+            border-radius: 12px; display: flex; flex-direction: column;
+            box-shadow: 0 0 50px rgba(59, 130, 246, 0.2);
+        }
+
+        .window-header {
+            height: 60px; background: #0a0a0a; border-bottom: 1px solid var(--border-light);
+            display: flex; justify-content: space-between; align-items: center; padding: 0 24px;
+            flex-shrink: 0; /* Prevents header from crushing */
+        }
+
+        #ibm-container {
+            flex: 1; /* Takes all remaining height */
+            width: 100%;
+            position: relative;
+            overflow: hidden; /* Ensures render stays inside */
+        }
+
+        /* --- HIDE IBM LAUNCHER --- */
+        [class*="Launcher"], #wxo-launcher { display: none !important; opacity: 0 !important; }
+
+    </style>
+</head>
+<body>
+
+    <div class="background-fx">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <nav>
+        <div class="container nav-inner">
+            <div class="logo"><i class="fas fa-cube"></i> BlockchainSeeker</div>
+            <div class="nav-links">
+                <a href="#platform">Platform</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#enterprise">Enterprise</a>
+            </div>
+            <button class="btn btn-primary" onclick="launchApp()">Launch App</button>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">POWERED BY IBM WATSONX</div>
+            <h1>AI-Driven<br><span class="text-gradient">Crypto Due Diligence</span></h1>
+            <p>Autonomous agents that audit code, sentiment, and risk in real-time.</p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button class="btn btn-primary" onclick="launchApp()">Start Audit</button>
+                <button class="btn btn-outline" onclick="showDocs()">Documentation</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="platform">
+        <div class="container">
+            <div class="section-header">
+                <h2>Agentic Architecture</h2>
+                <p>Our multi-agent swarm processes data 100x faster than human analysts.</p>
+            </div>
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-code"></i></div>
+                    <h3>Code Forensics</h3>
+                    <p>CodeAuditor scans GitHub for commit velocity, developer retention, and abandonment signals.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>Sentiment Engine</h3>
+                    <p>NewsAnalyst filters thousands of sources to separate genuine adoption from paid marketing.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h3>Risk Detection</h3>
+                    <p>RiskDetective cross-references wallets against known rug-pull databases and blacklists.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2>Simple Pricing</h2>
+                <p>Institutional tools, accessible to everyone.</p>
+            </div>
+            <div class="grid-3">
+                <div class="card" style="border-color: var(--border-light);">
+                    <h3>Starter</h3>
+                    <div class="price-tag">$0<span>/mo</span></div>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Basic GitHub Audit</li>
+                        <li><i class="fas fa-check"></i> Sentiment Score</li>
+                        <li><i class="fas fa-check"></i> 3 Audits / Day</li>
+                    </ul>
+                    <button class="btn btn-outline" style="width: 100%" onclick="launchApp()">Try Free</button>
+                </div>
+                <div class="card" style="border-color: var(--primary); background: rgba(59, 130, 246, 0.05);">
+                    <h3>Pro Analyst</h3>
+                    <div class="price-tag">$49<span>/mo</span></div>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Deep Code Forensics</li>
+                        <li><i class="fas fa-check"></i> Rug Pull Database</li>
+                        <li><i class="fas fa-check"></i> Unlimited Audits</li>
+                    </ul>
+                    <button class="btn btn-primary" style="width: 100%" onclick="launchApp()">Start Trial</button>
+                </div>
+                <div class="card">
+                    <h3>API Access</h3>
+                    <div class="price-tag">Usage</div>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> REST API Access</li>
+                        <li><i class="fas fa-check"></i> Custom Webhooks</li>
+                        <li><i class="fas fa-check"></i> Dedicated Support</li>
+                    </ul>
+                    <button class="btn btn-outline" style="width: 100%" onclick="showDocs()">Read Docs</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="enterprise">
+        <div class="container">
+            <div class="cta-box">
+                <h2>Enterprise Solutions</h2>
+                <p style="margin-bottom: 30px; color: var(--text-muted);">Need custom risk parameters or private VPC deployment?</p>
+                <button class="btn btn-outline" onclick="alert('Sales team contacted. We will email you shortly.')">Contact Sales</button>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container" style="text-align: center; padding-bottom: 40px; color: var(--text-muted); font-size: 0.9rem;">
+            &copy; 2025 BlockchainSeeker Inc. Powered by IBM watsonx Orchestrate.
+        </div>
+    </footer>
+
+    <div id="app-overlay">
+        <div id="chat-window">
+            <div class="window-header">
+                <div style="font-weight: 600; font-family: 'JetBrains Mono'; color: #4ade80;">
+                    ● SYSTEM ONLINE
+                </div>
+                <button onclick="closeApp()" style="background:none; border:none; color:#888; cursor:pointer; font-size:1.2rem;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="ibm-container"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- LOGIC ---
+        
+        function showDocs() {
+            alert("📚 Documentation Portal coming next week!\n\nWe are currently in Beta.");
+        }
+
+        // IBM CONFIG
+        window.wxoInstance = null;
+        
+        window.wxOConfiguration = {
+            orchestrationID: "939c3cf6ded744ebb2c7b7eac9b2d458_0c51ffae-8156-4607-b1be-d1f7e776d676",
+            hostURL: "https://eu-de.watson-orchestrate.cloud.ibm.com",
+            rootElementID: "root",
+            deploymentPlatform: "ibmcloud",
+            showLauncher: false,
+            crn: "crn:v1:bluemix:public:watsonx-orchestrate:eu-de:a/939c3cf6ded744ebb2c7b7eac9b2d458:0c51ffae-8156-4607-b1be-d1f7e776d676::",
+            
+            chatOptions: {
+                agentId: "eb40a9ab-b0c1-4369-bbd7-5144b5e2d274", 
+                agentEnvironmentId: "7135f19f-2919-4f3b-a4fc-1a2d07f21b06",
+                onLoad: function(instance) {
+                    window.wxoInstance = instance;
+                    instance.render();
+                }
+            },
+            layout: {
+                form: 'custom',
+                customElement: document.getElementById('ibm-container'),
+                showOrchestrateHeader: false // We made our own custom header
+            }
+        };
+
+        // LOAD SCRIPT
+        setTimeout(function () {
+            const script = document.createElement('script');
+            script.src = `${window.wxOConfiguration.hostURL}/wxochat/wxoLoader.js?embed=true`;
+            script.addEventListener('load', function () { wxoLoader.init(); });
+            document.head.appendChild(script);
+        }, 0);
+
+        // OPEN/CLOSE
+        function launchApp() {
+            document.getElementById('app-overlay').classList.add('active');
+            document.body.style.overflow = 'hidden'; // Lock scroll
+        }
+        function closeApp() {
+            document.getElementById('app-overlay').classList.remove('active');
+            document.body.style.overflow = 'auto'; // Unlock scroll
+        }
+    </script>
+
+</body>
+</html>
